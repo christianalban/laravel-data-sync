@@ -1,0 +1,19 @@
+{
+    "name": "alban/laravel-data-sync",
+    "description": "LaravelSheetSync is a library designed for the Laravel framework that allows you to import data from various sources, map its headers, build collections of objects based on the mapped data, and compare them with data currently stored in the database. It automatically classifies records into three categories: create, update, and delete, facilitating efficient and precise synchronization.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Alban\\LaravelDataSync\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Christian Albán",
+            "email": "christianalbanctdb1d@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
