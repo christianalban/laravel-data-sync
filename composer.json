@@ -8,6 +8,16 @@
             "Alban\\LaravelDataSync\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Alban\\LaravelDataSync\\LaravelDataSyncServiceProvider"
+            ],
+            "aliases": {
+                "DataSync": "Alban\\LaravelDataSync\\Facades\\DataSync"
+            }
+        }
+    },
     "authors": [
         {
             "name": "Christian Albán",
@@ -15,5 +25,8 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {}
+    "require": {
+        "illuminate/support": "^10",
+        "revolution/laravel-google-sheets": "6.x-dev"
+    }
 }
