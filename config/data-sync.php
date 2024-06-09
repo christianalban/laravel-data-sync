@@ -9,4 +9,8 @@ return [
         'boolean' => \Alban\LaravelDataSync\Support\Pipe\BooleanPipe::class,
         'array' => \Alban\LaravelDataSync\Support\Pipe\ArrayPipe::class,
     ],
+
+    'parsers' => [
+
+    ],
 ];

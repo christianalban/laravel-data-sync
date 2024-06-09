@@ -27,6 +27,12 @@ class DataSync
 
         $data = $this->applyFilters($data);
 
+        if ($this->sync->parser()) {
+            $parser = $this->sync->parser();
+
+            $data = $parser->parse($data);
+        }
+
         dd($data->first());
     }
 

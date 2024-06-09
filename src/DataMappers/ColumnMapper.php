@@ -101,9 +101,9 @@ class ColumnMapper
         $pipeName = $this->extractPipeName($pipe);
         $params = $this->extractPipeParams($pipe);
 
-        $pipes = config('data-sync.pipes');
+        $pipes = config('data-sync.pipes.' . $pipeName);
 
-        return new $pipes[$pipeName](...$params);
+        return new $pipes(...$params);
     }
 
     private function renameColumn(string $column): string
