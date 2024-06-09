@@ -5,6 +5,7 @@ namespace Alban\LaravelDataSync\Support;
 use Alban\LaravelDataSync\DataConnectors\DataConector;
 use Alban\LaravelDataSync\DataConnectors\GoogleSpreedSheetDataConector;
 use Alban\LaravelDataSync\DataMappers\ColumnMapper;
+use Alban\LaravelDataSync\Support\Classifier\Classified;
 use Alban\LaravelDataSync\Support\Sync;
 use Illuminate\Support\Collection;
 
@@ -27,16 +28,40 @@ class DataSync
 
         $data = $this->applyFilters($data);
 
+        $data = $this->parseData($data);
+
+        $resultClassified = $this->classifyData($data);
+
+        if ($resultClassified instanceof Classified) {
+            $resultClassified = $resultClassified->getToUpdate()->first();
+        }
+
+        dd($resultClassified);
+    }
+
+    private function classifyData(Collection $data): Classified | Collection
+    {
+        if ($this->sync->classifier()) {
+            $classifier = $this->sync->classifier();
+
+            return $classifier->classify($data, $this->sync->getCompareData());
+        }
+
+        return $data;
+    }
+
+    private function parseData(Collection $data): Collection
+    {
         if ($this->sync->parser()) {
             $parser = $this->sync->parser();
 
-            $data = $parser->parse($data);
+            return $parser->parse($data);
         }
 
-        dd($data->first());
+        return $data;
     }
 
-    public function applyFilters(Collection $data): Collection
+    private function applyFilters(Collection $data): Collection
     {
         if ($this->sync instanceof MustApplyFilter) {
             return $data->filter(function ($item) {
