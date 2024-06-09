@@ -14,19 +14,21 @@ abstract class Classifier
         $toDelete = collect();
 
         foreach ($data as $item) {
-            if ($this->compare($item, $dataToCompare) === null) {
+            if ($this->compareForCreate($item, $dataToCompare) === null) {
                 $toCreate->push($item);
+                continue;
             }
 
-            $updatedItem = $this->compare($item, $dataToCompare);
+            $updatedItem = $this->compareForUpdate($item, $dataToCompare);
             if ($updatedItem !== null) {
                 $item = $this->getItemMergedProps($item, $updatedItem);
                 $toUpdate->push($item);
+                continue;
             }
         }
 
         foreach ($dataToCompare as $item) {
-            $deleteItem = $this->compare($item, $data->toArray());
+            $deleteItem = $this->compareForCreate($item, $data->toArray());
             if ($deleteItem === null) {
                 $toDelete->push($item);
             }
@@ -51,5 +53,6 @@ abstract class Classifier
         return $item;
     }
 
-    public abstract function compare(array $item, array $dataToCompare): array | null;
+    public abstract function compareForCreate(array $item, array $dataToCompare): bool;
+    public abstract function compareForUpdate(array $item, array $dataToCompare): array | null;
 }

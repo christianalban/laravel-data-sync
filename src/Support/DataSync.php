@@ -33,7 +33,7 @@ class DataSync
         $resultClassified = $this->classifyData($data);
 
         if ($resultClassified instanceof Classified) {
-            $resultClassified = $resultClassified->getToUpdate()->first();
+            dd($resultClassified->getToUpdate()->count(), $resultClassified->getToCreate()->count(), $resultClassified->getToDelete()->count());
         }
 
         dd($resultClassified);
