@@ -5,26 +5,13 @@ namespace Alban\LaravelDataSync\Support;
 use Alban\LaravelDataSync\Support\Classifier\Classifier;
 use Alban\LaravelDataSync\Support\Classifier\PropMatchClassifier;
 use Alban\LaravelDataSync\Support\Parser\Parser;
+use Alban\LaravelDataSync\Support\Synchronizer\Synchronizer;
 
 abstract class Sync
 {
-    private array $compareData;
-
     public function parser(): Parser | null
     {
         return null;
-    }
-
-    public function compareWith(array $data): self
-    {
-        $this->compareData = $data;
-
-        return $this;
-    }
-
-    public function getCompareData(): array
-    {
-        return $this->compareData;
     }
 
     public function classifier(): Classifier | null
@@ -35,5 +22,15 @@ abstract class Sync
     public function propMatch(string $key): PropMatchClassifier
     {
         return new PropMatchClassifier($key);
+    }
+
+    public function synchronizer(): Synchronizer | null
+    {
+        return null;
+    }
+
+    public function uniqueJobId(array $data): string
+    {
+        return uniqid();
     }
 }

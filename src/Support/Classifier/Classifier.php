@@ -6,12 +6,37 @@ use Illuminate\Support\Collection;
 
 abstract class Classifier
 {
-    protected array $toMergeProps;
+    public function toMergeProps(): array
+    {
+        return [];
+    }
 
-    public function classify(Collection $data, array $dataToCompare): Classified {
+    public function dataToCompare(): array
+    {
+        return [];
+    }
+
+    public function afterClassifyCreate(Collection $data): Collection
+    {
+        return $data;
+    }
+
+    public function afterClassifyUpdate(Collection $data): Collection
+    {
+        return $data;
+    }
+
+    public function afterClassifyDelete(Collection $data): Collection
+    {
+        return $data;
+    }
+
+    public function classify(Collection $data): Classified {
         $toCreate = collect();
         $toUpdate = collect();
         $toDelete = collect();
+
+        $dataToCompare = $this->dataToCompare();
 
         foreach ($data as $item) {
             if ($this->compareForCreate($item, $dataToCompare) === null) {
@@ -34,19 +59,16 @@ abstract class Classifier
             }
         }
 
+        $toCreate = $this->afterClassifyCreate($toCreate);
+        $toUpdate = $this->afterClassifyUpdate($toUpdate);
+        $toDelete = $this->afterClassifyDelete($toDelete);
+
         return new Classified($toCreate, $toUpdate, $toDelete);
-    }
-
-    public function mergeProps(array $props): self
-    {
-        $this->toMergeProps = $props;
-
-        return $this;
     }
 
     private function getItemMergedProps(array $item, array $itemExtract): array
     {
-        foreach ($this->toMergeProps as $prop) {
+        foreach ($this->toMergeProps() as $prop) {
             $item[$prop] = $itemExtract[$prop];
         }
 

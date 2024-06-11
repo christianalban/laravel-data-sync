@@ -6,7 +6,10 @@ use Alban\LaravelDataSync\DataConnectors\DataConector;
 use Alban\LaravelDataSync\DataConnectors\GoogleSpreedSheetDataConector;
 use Alban\LaravelDataSync\DataMappers\ColumnMapper;
 use Alban\LaravelDataSync\Support\Classifier\Classified;
+use Alban\LaravelDataSync\Support\Classifier\Classifier;
+use Alban\LaravelDataSync\Support\Parser\Parser;
 use Alban\LaravelDataSync\Support\Sync;
+use Alban\LaravelDataSync\Support\Synchronizer\Synchronizer;
 use Illuminate\Support\Collection;
 
 class DataSync
@@ -20,7 +23,7 @@ class DataSync
         return $this;
     }
 
-    public function startSync(): void
+    public function prepareForSync(): Collection | Classified
     {
         $data = $this->getData();
 
@@ -30,29 +33,50 @@ class DataSync
 
         $data = $this->parseData($data);
 
-        $resultClassified = $this->classifyData($data);
-
-        if ($resultClassified instanceof Classified) {
-            dd($resultClassified->getToUpdate()->count(), $resultClassified->getToCreate()->count(), $resultClassified->getToDelete()->count());
-        }
-
-        dd($resultClassified);
+        return $this->classifyData($data);
     }
 
-    private function classifyData(Collection $data): Classified | Collection
+    public function startSync(Collection | Classified $data): Collection | Classified
     {
-        if ($this->sync->classifier()) {
-            $classifier = $this->sync->classifier();
+        if ($data instanceof Collection) {
+            return $data;
+        }
 
-            return $classifier->classify($data, $this->sync->getCompareData());
+        $synchronizer = $this->sync->synchronizer();
+
+        if ($synchronizer === null) {
+            return $data;
+        }
+
+        if (!$data instanceof Classified) {
+            throw new \Exception('Data must be an instance of ' . Classified::class);
+        }
+
+        if ($synchronizer instanceof Synchronizer) {
+            $synchronizer->sync($this->sync, $data);
         }
 
         return $data;
     }
 
+    private function classifyData(Collection $data): Classified | Collection
+    {
+        if (!$this->sync instanceof MustClassificate) {
+            return $data;
+        }
+
+        $classifier = $this->sync->classifier();
+        if ($classifier instanceof Classifier) {
+            return $classifier->classify($data);
+        }
+
+    }
+
     private function parseData(Collection $data): Collection
     {
-        if ($this->sync->parser()) {
+        $parser = $this->sync->parser();
+
+        if ($parser instanceof Parser) {
             $parser = $this->sync->parser();
 
             return $parser->parse($data);
@@ -70,13 +94,15 @@ class DataSync
         }
     }
 
-    public static function sync(Sync $sync): void
+    public static function sync(Sync $sync): Collection | Classified
     {
         $synchronizer = new self;
 
         $synchronizer->setSync($sync);
 
-        $synchronizer->startSync();
+        $preparedData = $synchronizer->prepareForSync();
+
+        return $synchronizer->startSync($preparedData);
     }
 
     private function getData(): array
