@@ -28,11 +28,26 @@ class GoogleSpreedSheetDataConector implements DataConector
     private function getSingleSheetData(string $sheetName): array
     {
         $rows = Sheets::spreadsheet($this->spreadsheetId)->sheet($sheetName)->get();
-        $header = $rows->pull(config('data-sync.startRow'));
+        $header = $rows->get(config('data-sync.startRow'));
         $heads = [];
         foreach ($header as $head) {
             $heads[] = strtolower(str_replace(' ', '', $head));
         }
+
+        $rows = $rows->slice(config('data-sync.startRow') + 1)
+            ->map(function ($row) use ($heads) {
+                $data = [];
+                foreach ($heads as $key => $head) {
+                    if (!isset($row[$key])) {
+                        $data[] = '';
+                        continue;
+                    }
+                    $data[] = $row[$key];
+                }
+
+                return $data;
+            });
+
         $values = Sheets::collection(header: $heads, rows: $rows);
         return $values->toArray();
     }

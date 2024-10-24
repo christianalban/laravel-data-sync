@@ -39,7 +39,7 @@ abstract class Classifier
         $dataToCompare = $this->dataToCompare();
 
         foreach ($data as $item) {
-            if ($this->compareForCreate($item, $dataToCompare) === null) {
+            if ($this->compareForCreate($item, $dataToCompare)) {
                 $toCreate->push($item);
                 continue;
             }
@@ -53,8 +53,7 @@ abstract class Classifier
         }
 
         foreach ($dataToCompare as $item) {
-            $deleteItem = $this->compareForCreate($item, $data->toArray());
-            if ($deleteItem === null) {
+            if ($this->compareForCreate($item, $data->toArray())) {
                 $toDelete->push($item);
             }
         }

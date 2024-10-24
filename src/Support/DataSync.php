@@ -61,15 +61,12 @@ class DataSync
 
     private function classifyData(Collection $data): Classified | Collection
     {
-        if (!$this->sync instanceof MustClassificate) {
-            return $data;
-        }
-
         $classifier = $this->sync->classifier();
         if ($classifier instanceof Classifier) {
             return $classifier->classify($data);
         }
 
+        return $data;
     }
 
     private function parseData(Collection $data): Collection

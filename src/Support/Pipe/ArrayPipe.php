@@ -6,6 +6,10 @@ class ArrayPipe extends Pipe
 {
     public function transform(mixed $data, string $separator): mixed
     {
-        return explode($separator, $data);
+        $dataArray = explode($separator, $data);
+
+        return array_map(function ($item) {
+            return trim($item);
+        }, $dataArray);
     }
 }
