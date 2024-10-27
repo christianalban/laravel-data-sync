@@ -48,7 +48,7 @@ class PropMatchClassifier extends Classifier
             return $this->compareArrayContent($value, $valueToCompare);
         }
 
-        return $this->compareStringContent($value, $valueToCompare);
+        return $this->compareSingleContent($value, $valueToCompare);
     }
 
     private function compareArrayContent(array $value, array $valueToCompare): bool
@@ -66,10 +66,34 @@ class PropMatchClassifier extends Classifier
         return true;
     }
 
-    private function compareStringContent(string $value, string $valueToCompare): bool
+    private function compareSingleContent($value, string $valueToCompare): bool
     {
-        $cleanedValue = $this->removeSpaces($value);
-        $cleanedValueToCompare = $this->removeSpaces($valueToCompare);
+        if (is_array($value)) {
+            foreach ($value as $item) {
+                if (!$this->compareContent($item, $valueToCompare)) {
+                    return false;
+                }
+            }
+        }
+        $cleanedValue = $value;
+        $cleanedValueToCompare = $valueToCompare;
+
+        if (is_bool($value)) {
+            $cleanedValueToCompare = $valueToCompare == '1' ? true : false;
+        }
+
+        if (is_int($value)) {
+            $cleanedValueToCompare = (int) $valueToCompare;
+        }
+
+        if (is_float($value)) {
+            $cleanedValueToCompare = (float) $valueToCompare;
+        }
+
+        if (is_string($value)) {
+            $cleanedValue = $this->removeSpaces($value);
+            $cleanedValueToCompare = $this->removeSpaces($valueToCompare);
+        }
 
         return $cleanedValue == $cleanedValueToCompare;
     }
