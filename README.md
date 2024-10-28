@@ -55,7 +55,8 @@ The methods listed above can be used in the same way as you would use the Form c
 {!! Form::text('relationship', $item->client->agent_relationship, ['required', 'class' => 'form-control input-sm']) !!}
 ```
 
-For more examples, please refer to the source code in the src/FormAdapter directory.
-License
+For more examples, please refer to the source code in the `src/FormAdapter.php` class file.
+
+## License
 
 This package is open-sourced software licensed under the (MIT license)[https://opensource.org/licenses/MIT].
