@@ -24,9 +24,9 @@
             "email": "christianalbanctdb1d@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "illuminate/support": "^10",
-        "revolution/laravel-google-sheets": "6.x-dev"
+        "revolution/laravel-google-sheets": "6.4"
     }
 }
