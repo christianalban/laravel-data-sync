@@ -59,7 +59,7 @@ class DataSync
         return $data;
     }
 
-    private function classifyData(Collection $data): Classified | Collection
+    public function classifyData(Collection $data): Classified | Collection
     {
         $classifier = $this->sync->classifier();
         if ($classifier instanceof Classifier) {
@@ -69,7 +69,7 @@ class DataSync
         return $data;
     }
 
-    private function parseData(Collection $data): Collection
+    public function parseData(Collection $data): Collection
     {
         $parser = $this->sync->parser();
 
@@ -82,7 +82,7 @@ class DataSync
         return $data;
     }
 
-    private function applyFilters(Collection $data): Collection
+    public function applyFilters(Collection $data): Collection
     {
         if ($this->sync instanceof MustApplyFilter) {
             return $data->filter(function ($item) {
@@ -102,14 +102,14 @@ class DataSync
         return $synchronizer->startSync($preparedData);
     }
 
-    private function getData(): array
+    public function getData(): array
     {
         $dataConector = $this->makeDataConector();
 
         return $dataConector->getData();
     }
 
-    private function mapData(array $data): Collection
+    public function mapData(array $data): Collection
     {
         if ($this->sync instanceof WithColumnMappings) {
             $mapper = new ColumnMapper($this->sync);
