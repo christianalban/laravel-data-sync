@@ -34,7 +34,7 @@ abstract class Sync
         return uniqid();
     }
 
-    public function startRow(): int
+    public function getStartRow(): int
     {
         return config('data-sync.startRow', 1);
     }
