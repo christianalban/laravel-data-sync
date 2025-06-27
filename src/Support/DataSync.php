@@ -132,7 +132,8 @@ class DataSync
     {
         $sheetId = $this->sync->getSheetId();
         $sheetName = $this->sync->getSheetName();
+        $startRow = $this->sync->startRow();
 
-        return new GoogleSpreedSheetDataConector($sheetId, $sheetName);
+        return new GoogleSpreedSheetDataConector($sheetId, $sheetName, $startRow);
     }
 }

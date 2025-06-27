@@ -8,7 +8,8 @@ class GoogleSpreedSheetDataConector implements DataConector
 {
     public function __construct(
         private string $spreadsheetId,
-        private string|array $sheetName
+        private string|array $sheetName,
+        private int $startRow,
     ) {}
 
     public function getData(): array
@@ -28,13 +29,13 @@ class GoogleSpreedSheetDataConector implements DataConector
     private function getSingleSheetData(string $sheetName): array
     {
         $rows = Sheets::spreadsheet($this->spreadsheetId)->sheet($sheetName)->get();
-        $header = $rows->get(config('data-sync.startRow'));
+        $header = $rows->get($this->startRow);
         $heads = [];
         foreach ($header as $head) {
             $heads[] = strtolower(str_replace(' ', '', $head));
         }
 
-        $rows = $rows->slice(config('data-sync.startRow') + 1)
+        $rows = $rows->slice($this->startRow + 1)
             ->map(function ($row) use ($heads) {
                 $data = [];
                 foreach ($heads as $key => $head) {
