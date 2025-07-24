@@ -39,17 +39,18 @@ class GoogleSpreedSheetDataConector implements DataConector
             ->map(function ($row) use ($heads) {
                 $data = [];
                 foreach ($heads as $key => $head) {
-                    if (!isset($row[$key])) {
-                        $data[] = '';
-                        continue;
+                    if (empty($row[$key])) {
+                        if (!isset($data[$head])) {
+                            $data[$head] = '';
+                        }
+                    } else {
+                        $data[$head] = $row[$key];
                     }
-                    $data[] = $row[$key];
                 }
 
                 return $data;
             });
 
-        $values = Sheets::collection(header: $heads, rows: $rows);
-        return $values->toArray();
+        return $rows->toArray();
     }
 }
