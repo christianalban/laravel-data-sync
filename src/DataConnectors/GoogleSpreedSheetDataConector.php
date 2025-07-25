@@ -44,7 +44,7 @@ class GoogleSpreedSheetDataConector implements DataConector
                             $data[$head] = '';
                         }
                     } else {
-                        $data[$head] = $row[$key];
+                        $data[$head] = trim($row[$key]);
                     }
                 }
 
